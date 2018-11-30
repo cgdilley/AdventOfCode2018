@@ -1,0 +1,7 @@
+[package]
+name = "practice_qs"
+version = "0.1.0"
+authors = ["Christopher Dilley <cgdilley@gmail.com>"]
+
+[dependencies]
+rand = "0.6.1"
