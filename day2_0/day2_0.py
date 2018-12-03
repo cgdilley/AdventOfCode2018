@@ -38,7 +38,7 @@ def aggregate_dups(dup_list: list) -> dict:
     a particular character, and returning a dictionary that maps each X that occurs to this total count.
 
     eg.
-    [
+    aggregate_dups([
         {
             "a": 2,
             "b": 1,
@@ -48,7 +48,7 @@ def aggregate_dups(dup_list: list) -> dict:
             "d": 3,
             "e": 2
         }
-    ] ->
+    ]) ->
     {
         1: 1,
         2: 2,
