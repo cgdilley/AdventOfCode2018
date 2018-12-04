@@ -4,3 +4,6 @@ version = "0.1.0"
 authors = ["Christopher Dilley <cgdilley@gmail.com>"]
 
 [dependencies]
+rust_utils = { path = "../rust_utils" }
+regex = "1.1.0"
+lazy_static = "1.2.0"
