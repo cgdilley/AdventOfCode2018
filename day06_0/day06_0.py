@@ -8,7 +8,7 @@ def main():
         lines = [read_coord(l) for l in f.readlines()]
 
     limits = find_limits(lines)
-    bounds = build_bounds(lines, limits)
+    bounds = build_bounds(lines, limits, expand=True)
 
     print_bounds(lines, bounds, limits)
 
@@ -24,8 +24,10 @@ def read_coord(s):
     return int(match.group(1)), int(match.group(2))
 
 
-def build_bounds(coords, limits):
-    
+def build_bounds(coords, limits, expand=False):
+    if expand:
+        return build_bounds_by_expansion(coords, limits)
+
     ownership = dict()
     for x in range(limits["left"], limits["right"] + 1):
         for y in range(limits["top"], limits["bottom"] + 1):
@@ -40,47 +42,58 @@ def build_bounds(coords, limits):
                 elif min_dist == dist:
                     min_id = -1
             ownership[(x, y)] = min_id
-            
+
     return ownership
                                
 
-# def build_bounds(coords, limits):
-#     considered = set(coords)
-#     ownership = dict()
-# 
-#     dist = 0
-# 
-#     while len(considered) > 0 and dist < 1000:
-#         to_add_ownership = {}
-# 
-#         for i in range(len(coords)):
-#             coord = coords[i]
-# 
-#             box = find_box_around_coord(coord, dist)
-#             for b in box:
-#                 if not is_within_limits(b, limits):
-#                     if coord in considered:
-#                         considered.remove(coord)
-#                     continue
-# 
-#                 if b in to_add_ownership:
-#                     to_add_ownership[b].append(i)
-#                 else:
-#                     to_add_ownership[b] = [i]
-# 
-#         expanded = set()
-#         for coord, items in to_add_ownership.items():
-#             if coord not in ownership:
-#                 if len(items) == 1:
-#                     ownership[coord] = items[0]
-#                     expanded.add(coords[items[0]])
-#                 else:
-#                     ownership[coord] = -1
-# 
-#         considered = considered.intersection(expanded)
-#         dist += 1
-# 
-#     return ownership
+def build_bounds_by_expansion(coords, limits):
+    considered = set(coords)
+    ownership = dict()
+
+    dist = 0
+
+    # Dist < 1000 is used as an EMERGENCY BRAKE
+    # Otherwise, continue looping while there are still regions expanding
+    while len(considered) > 0 and dist < 1000:
+        to_add_ownership = {}
+
+        # Iterate through all coords (using index as the coord's ID)
+        for i in range(len(coords)):
+            coord = coords[i]
+
+            # Get a set of coordinates corresponding to a box around the coord at distance 'dist'
+            box = find_box_around_coord(coord, dist)
+            for b in box:
+                # If we've gone off the edge, remove this coord from consideration
+                if not is_within_limits(b, limits):
+                    if coord in considered:
+                        considered.remove(coord)
+                    continue
+
+                # Add this coord's ID to the list of potential candidates of ownership for this box coord
+                if b in to_add_ownership:
+                    to_add_ownership[b].append(i)
+                else:
+                    to_add_ownership[b] = [i]
+
+        # Iterate through all ownership addition candidates and adjudicate them,
+        # keeping track of all coord IDs that expanded at least one square this iteration
+        expanded = set()
+        for coord, items in to_add_ownership.items():
+            if coord not in ownership:
+                if len(items) == 1:
+                    ownership[coord] = items[0]
+                    expanded.add(coords[items[0]])
+                else:
+                    ownership[coord] = -1
+
+        # Remove from consideration all coordinates that didn't expand this iteration
+        considered = considered.intersection(expanded)
+
+        # Increase search distance
+        dist += 1
+
+    return ownership
 
 
 def count_bounds_sizes(ownership, limits):
@@ -95,7 +108,7 @@ def count_bounds_sizes(ownership, limits):
 
     edges = draw_box(limits["left"], limits["right"], limits["top"], limits["bottom"])
     for edge_coord in edges:
-        if ownership[edge_coord] in count:
+        if edge_coord in ownership and ownership[edge_coord] in count:
             del count[ownership[edge_coord]]
 
     return count
