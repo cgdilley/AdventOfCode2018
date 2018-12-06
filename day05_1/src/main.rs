@@ -41,7 +41,7 @@ fn test_all_removals(line: &mut str) -> (String, String) {
         let fused = fuse_string(&mut new_line);
 
         if min.1.len() == 0 || fused.len() < min.1.len() {
-            min = (ch, fused)
+            min = (ch, fused);
         }
     }
 

@@ -1,8 +1,5 @@
 <Query Kind="Program" />
 
-
-
-
 static void Main()
 {
 	string filename = @"C:\Users\cgdil\Documents\Files\Programming Stuff\Rust\AdventOfCode2018\input\day4.txt";
@@ -27,11 +24,11 @@ static void Main()
                                  {
                                      id = group.Key,
                                      minute = group.SelectMany((x) => x)
-                                                   .GroupBy((minute) => minute, (_) => true)
+                                                   .GroupBy((minute) => minute)
                                                    .Aggregate(new {minute = 0, count = 0},
                                                               (max, minuteGroup) => minuteGroup.Count() > max.count
                                                                                         ? new {minute = minuteGroup.Key, count = minuteGroup.Count()}
-                                                                                         : max)
+                                                                                        : max)
                                  })
               .OrderByDescending((group) => group.minute.count)
               .Take(1)
