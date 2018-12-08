@@ -4,3 +4,4 @@ version = "0.1.0"
 authors = ["Christopher Dilley <cgdilley@gmail.com>"]
 
 [dependencies]
+rust_utils = { path = "../rust_utils" }
