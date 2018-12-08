@@ -33,8 +33,7 @@ def build_bounds(coords, limits, expand=False):
         for y in range(limits["top"], limits["bottom"] + 1):
             min_dist = -1
             min_id = -1
-            for i in range(len(coords)):
-                coord = coords[i]
+            for i, coord in enumerate(coords):
                 dist = abs(coord[0] - x) + abs(coord[1] - y)
                 if min_dist < 0 or dist < min_dist:
                     min_dist = dist
@@ -58,8 +57,7 @@ def build_bounds_by_expansion(coords, limits):
         to_add_ownership = {}
 
         # Iterate through all coords (using index as the coord's ID)
-        for i in range(len(coords)):
-            coord = coords[i]
+        for i, coord in enumerate(coords):
 
             # Get a set of coordinates corresponding to a box around the coord at distance 'dist'
             box = find_box_around_coord(coord, dist)

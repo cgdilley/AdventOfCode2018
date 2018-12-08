@@ -1,0 +1,11 @@
+[[package]]
+name = "day08_0"
+version = "0.1.0"
+dependencies = [
+ "rust_utils 0.1.0",
+]
+
+[[package]]
+name = "rust_utils"
+version = "0.1.0"
+
