@@ -8,7 +8,13 @@ def main():
 
     battle_map = load_map(lines)
 
-    rounds = do_battle(battle_map, pause=False)
+    elves = count_elves(battle_map)
+
+    rounds = do_battle(battle_map, pause=False, elf_ap=19)
+
+    remaining_elves = count_elves(battle_map)
+
+    print("%d elves died in this combat." % (elves - remaining_elves))
 
     hp_total = sum([u["hp"] for u in battle_map["_units"].values()])
 
@@ -18,6 +24,10 @@ def main():
         hp_total,
         rounds * hp_total
     ))
+
+
+def count_elves(battle_map):
+    return sum([1 if u["type"] == "E" else 0 for u in battle_map["_units"].values()])
 
 
 def load_map(lines: list) -> dict:
@@ -99,7 +109,7 @@ def print_map(battle_map: dict, extras: dict = None) -> None:
     print()
 
 
-def do_battle(battle_map, pause=False):
+def do_battle(battle_map, pause=False, elf_ap=3):
     """
     Executes a full battle, ending whenever only one side remains.
     Returns the number of rounds that it took.
@@ -114,7 +124,7 @@ def do_battle(battle_map, pause=False):
         print_map(battle_map)
         if pause:
             input()
-        if execute_round(battle_map):
+        if execute_round(battle_map, elf_ap=elf_ap):
             break
         rounds += 1
     print_map(battle_map)
@@ -137,7 +147,7 @@ def is_battle_over(battle_map: dict) -> bool:
     return True
 
 
-def execute_round(battle_map: dict) -> bool:
+def execute_round(battle_map: dict, elf_ap=3) -> bool:
     """
     Executes one full round of combat.  Checks whether or not the battle is finished
     after each individual move.  If the battle is considered over before the last move is made,
@@ -168,7 +178,8 @@ def execute_round(battle_map: dict) -> bool:
         unit_coord = move_unit(battle_map, unit_coord)
 
         # Execute attacks, if any
-        kill = execute_attack(battle_map, unit_coord, 3)
+        kill = execute_attack(battle_map, unit_coord,
+                              elf_ap if battle_map["_units"][unit_coord]["type"] == "E" else 3)
 
         if kill is not None:
             killed.add(kill)
