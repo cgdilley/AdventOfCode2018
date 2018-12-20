@@ -16,11 +16,18 @@ def main():
 
     print_map(ground_map, bounds)
 
-    water_squares = flow_from_source(ground_map, bounds, (500, 0))
+    water_squares, flowing = flow_from_source(ground_map, bounds, (500, 0))
 
-    print_map(ground_map, bounds)
+    print_map(ground_map, bounds, flowing=flowing)
 
     print("After flowing completely, %d squares are saturated with water." % water_squares)
+
+    for flow in flowing:
+        del ground_map[flow]
+
+    print_map(ground_map, bounds, flowing=set())
+
+    print("After the spring runs dry, %d squares of water will be retained." % count_water(ground_map, bounds))
 
 
 def build_ground_map(lines):
@@ -132,7 +139,7 @@ def flow_from_source(ground_map, bounds, source):
                 sources.extend(new_sources)
                 settling = False
 
-    return count_water(ground_map, bounds)
+    return count_water(ground_map, bounds), flowing
 
 
 def flowable(ground_map, location, flowing):
