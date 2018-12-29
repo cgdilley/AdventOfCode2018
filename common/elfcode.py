@@ -1,6 +1,7 @@
 import re
 
 REGEX = re.compile(r"^([^\s]+)\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)$")
+I_REG = re.compile(r"^#ip (\d+)")
 
 OPCODES = ["addr", "addi", "mulr", "muli", "banr", "bani", "borr", "bori", "setr", "seti", "gtir", "gtri",
            "gtrr", "eqir", "eqri", "eqrr"]
@@ -46,6 +47,12 @@ def get_command_value(registers, com):
         return 1 if registers[com.a] == registers[com.b] else 0
     else:
         raise Exception("lolwut")
+
+
+def parse_instruction_register(line: str) -> int:
+    return int(I_REG.match(line).group(1))
+
+#
 
 
 class Command:
