@@ -102,7 +102,7 @@ def manhattan(coord1: tuple, coord2: tuple) -> int:
     :param coord2:
     :return:
     """
-    return sum(abs(c[0] - c[1]) for c in zip(coord1, coord2))
+    return sum(abs(dim1 - dim2) for dim1, dim2 in zip(coord1, coord2))
 
 
 #
